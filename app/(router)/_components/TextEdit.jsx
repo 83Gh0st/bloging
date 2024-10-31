@@ -149,7 +149,7 @@ const TextEdit = () => {
            sources: ["local", "url", "unsplash"],
            multiple: false,
            maxFiles: 1,
-           uploadPreset: "your_upload_preset", // Ensure this is set correctly
+           uploadPreset: "ffhclze6", // Ensure this is set correctly
          }}
          signatureEndpoint="/api/sign-image" // The endpoint to get the signature
          onSuccess={handleImageUpload}
