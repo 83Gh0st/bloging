@@ -8,7 +8,7 @@ import { deleteUserPost, getUser } from "@/app/redux/UserSignupLoginSlice";
 import BlogCard from "../home/_components/BlogCard";
 import BlogCardSkeleton from "../home/_components/BlogCardSkeleton";
 import { useRouter } from "next/navigation";
-import EditProfile from "../_components/EditProfile";
+import EditProfile from "../_components/EditProfile";                                                          
 import { updateUserEmail, updateUserName } from "@/app/redux/UpdateSlice";
 
 const UserProfile = () => {

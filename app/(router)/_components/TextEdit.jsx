@@ -1,4 +1,5 @@
 "use client";
+
 import { createPost, hidePost } from "@/app/redux/PostSlice";
 import { CldUploadWidget } from "next-cloudinary";
 import { useState, useEffect } from "react";
@@ -15,51 +16,95 @@ const TextEdit = () => {
   });
   const [imageUploaded, setImageUploaded] = useState(false);
   const dispatch = useDispatch();
-
+  
   const userId = useSelector((state) => state.user.entity.data.id);
 
-  const handleChnage = (e) => {
-    setPostDetails({
-      ...postDetail,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // Update postDetails when userId changes
   useEffect(() => {
     setPostDetails((prevDetails) => ({
       ...prevDetails,
       userId: userId,
     }));
   }, [userId]);
-  const handleImageUpload = (imageData) => {
-    if (!imageData.info.secure_url) {
-      setImageUploaded(false);
-      return;
-    }
+
+  // Handle input changes
+  const handleChange = (e) => {
     setPostDetails({
       ...postDetail,
-      image: imageData.info.secure_url,
+      [e.target.name]: e.target.value,
     });
-    setImageUploaded(true);
   };
 
+  // Handle image upload success
+  const handleImageUpload = (imageData) => {
+    console.log("Image Data:", imageData); // Debug: Check the structure of imageData
+    if (imageData && imageData.info?.secure_url) {
+      setPostDetails((prevDetails) => ({
+        ...prevDetails,
+        image: imageData.info.secure_url,
+      }));
+      setImageUploaded(true);
+      toast({
+        title: "Image Uploaded",
+        description: "Image uploaded successfully.",
+        variant: "default",
+      });
+    } else {
+      setImageUploaded(false);
+      toast({
+        title: "Image Upload Failed",
+        description: "Please try uploading the image again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!imageUploaded) {
+      toast({
+        title: "Image Required",
+        description: "Please upload an image to create a post.",
+        variant: "destructive",
+      });
       return;
     }
+
     const serializablePostDetail = {
       title: postDetail.title,
       description: postDetail.description,
       userId: postDetail.userId,
       image: postDetail.image,
     };
-    dispatch(createPost({ postDetail: serializablePostDetail }));
-    dispatch(hidePost());
-    toast({
-      title: "Post created",
-      description: "Your post has been created successfully",
-      variant: "default",
-    });
+
+    try {
+      // Dispatch actions to create a post
+      dispatch(createPost({ postDetail: serializablePostDetail }));
+      dispatch(hidePost());
+
+      toast({
+        title: "Post Created",
+        description: "Your post has been created successfully.",
+        variant: "default",
+      });
+
+      // Reset the form after submission
+      setPostDetails({
+        title: "",
+        description: "",
+        image: "",
+        userId: userId,
+      });
+      setImageUploaded(false);
+    } catch (error) {
+      console.error("Failed to create post:", error);
+      toast({
+        title: "Submission Failed",
+        description: "There was an error creating your post. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -75,7 +120,7 @@ const TextEdit = () => {
             name="title"
             id="title"
             value={postDetail.title}
-            onChange={handleChnage}
+            onChange={handleChange}
             className="w-full px-3 py-2 placeholder-gray-400 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
             placeholder="Title"
             required
@@ -83,18 +128,14 @@ const TextEdit = () => {
         </label>
       </div>
       <div className="flex w-full mt-4">
-        <label
-          htmlFor="description"
-          className="w-full text-white dark:text-gray-200"
-        >
+        <label htmlFor="description" className="w-full text-white dark:text-gray-200">
           Description:
           <textarea
             name="description"
             id="description"
             rows="3"
-            cols={50}
             value={postDetail.description}
-            onChange={handleChnage}
+            onChange={handleChange}
             className="w-full px-3 py-2 placeholder-gray-400 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
             placeholder="Description"
             required
@@ -102,30 +143,29 @@ const TextEdit = () => {
         </label>
       </div>
       <div className="flex w-full mt-4">
-        <div className="flex w-full mt-4">
-          {postDetail.title && postDetail.description ? (
-            <CldUploadWidget
-              options={{
-                sources: ["local", "url", "unsplash"],
-                multiple: false,
-                maxFiles: 1,
-              }}
-              signatureEndpoint={"/api/sign-image"}
-              onSuccess={handleImageUpload}
-            >
-              {({ open }) => {
-                return (
-                  <button
-                    className="w-full px-3 py-2 text-white bg-gray-700 border dark:bg-indigo-600   rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-900 dark:hover:bg-indigo-700 disabled:opacity-25 transition ease-in-out duration-150"
-                    onClick={open}
-                  >
-                    Upload Image
-                  </button>
-                );
-              }}
-            </CldUploadWidget>
-          ) : null}
-        </div>
+        {postDetail.title && postDetail.description && (
+         <CldUploadWidget
+         options={{
+           sources: ["local", "url", "unsplash"],
+           multiple: false,
+           maxFiles: 1,
+           uploadPreset: "your_upload_preset", // Ensure this is set correctly
+         }}
+         signatureEndpoint="/api/sign-image" // The endpoint to get the signature
+         onSuccess={handleImageUpload}
+       >
+         {({ open }) => (
+           <button
+             onClick={open}
+             className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"
+           >
+             Upload Image
+           </button>
+         )}
+       </CldUploadWidget>
+       
+
+        )}
       </div>
       <div className="flex w-full mt-4">
         <button

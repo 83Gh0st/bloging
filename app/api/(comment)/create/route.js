@@ -4,12 +4,16 @@ import { NextResponse } from "next/server";
 export const POST = async (req) => {
   try {
     const { content, userId, postId } = await req.json();
+    
+    // Basic validation
     if (!content || !userId || !postId) {
       return NextResponse.json({
-        message: "please check your user details and try again later.",
+        message: "Please provide content, user ID, and post ID.",
         status: 400,
       });
     }
+
+    // Create a new comment
     const comment = await prisma.comment.create({
       data: {
         content,
@@ -17,21 +21,17 @@ export const POST = async (req) => {
         postId,
       },
     });
-    if (!comment) {
-      return NextResponse.json({
-        message: "comment not created",
-        status: 400,
-      });
-    }
+
     return NextResponse.json({
       status: 201,
-      message: "comment created successfully",
+      message: "Comment created successfully.",
       data: comment,
     });
   } catch (error) {
+    console.error("Error creating comment:", error); // Log the error for debugging
     return NextResponse.json({
       status: 500,
-      message: error.message,
+      message: "An error occurred while creating the comment. Please try again later.",
     });
   }
 };

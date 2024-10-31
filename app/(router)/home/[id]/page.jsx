@@ -31,7 +31,7 @@ const Post = () => {
   const loading = useSelector((state) => state?.post?.loading);
   const userId = useSelector((state) => state?.user?.entity?.data?.id);
 
-  // update Tilte
+  // Update Title
   useEffect(() => {
     setTitle(post?.title);
   }, [post?.title]);
@@ -39,13 +39,16 @@ const Post = () => {
   const udateTitle = () => {
     dispatch(updateTitle({ id: post?.id, title: title }));
   };
-  // update Paragraph
+
+  // Update Paragraph
   useEffect(() => {
     setPara(post?.content);
   }, [post?.content]);
+
   const udatePara = () => {
     dispatch(updatePostParagraph({ id: post?.id, content: para }));
   };
+
   if (loading) {
     return (
       <div className="flex flex-col bg-gray-100 dark:bg-gray-900 rounded-lg p-5 mt-5 mx-5 animate-pulse">
@@ -65,8 +68,9 @@ const Post = () => {
       </div>
     );
   }
+
   return (
-    <div className="flex flex-col bg-gray-100 dark:bg-gray-900 rounded-lg p-5 mt-5 mx-5">
+    <div className="flex flex-col bg-gray-100 dark:bg-gray-900 rounded-lg p-5 mt-5 mx-5 space-y-5">
       <div className="w-full overflow-hidden xl:h-[55vh]">
         <Image
           src={post?.image}
@@ -87,10 +91,10 @@ const Post = () => {
           </span>
         </div>
       )}
-      <h2 className="text-2xl font-bold mt-4 flex items-center justify-start">
-        {post?.title}{" "}
+      <h2 className="text-2xl font-bold mt-4 flex items-center justify-between">
+        {post?.title}
         {post?.userId === userId && (
-          <span className="m-3 text-sm font-normal flex items-center justify-between px-2 dark:bg-gray-800  bg-gray-200 rounded-lg ">
+          <span className="m-3 text-sm font-normal flex items-center justify-between px-2 dark:bg-gray-800 bg-gray-200 rounded-lg">
             <p>Edit Title:</p>
             <EditProfile
               name={"Title"}
@@ -101,10 +105,10 @@ const Post = () => {
           </span>
         )}
       </h2>
-      <div className="text-gray-700 mt-2 dark:text-gray-200 flex-col flex">
+      <div className="text-gray-700 mt-2 dark:text-gray-200 flex-col flex space-y-2">
         {post?.userId === userId && (
-          <span className="m-3 text-sm font-normal flex items-center justify-between px-2 w-44 dark:bg-gray-800  bg-gray-200 rounded-lg ">
-            <p>Edit Paragraph: </p>
+          <span className="m-3 text-sm font-normal flex items-center justify-between px-2 w-44 dark:bg-gray-800 bg-gray-200 rounded-lg">
+            <p>Edit Paragraph:</p>
             <EditProfile
               name={"Paragraph"}
               value={para}
@@ -113,7 +117,7 @@ const Post = () => {
             />
           </span>
         )}
-        {post?.content}
+        <p>{post?.content}</p>
       </div>
       <div className="flex justify-between items-center mt-4">
         <div>
@@ -136,7 +140,7 @@ const Post = () => {
       ) : (
         <div className="flex w-full items-center justify-center flex-col">
           <p
-            className=" dark:text-gray-300 text-gray-500 font-semibold text-lg md:text-2xl"
+            className="dark:text-gray-300 text-gray-500 font-semibold text-lg md:text-2xl"
             style={{ textAlign: "center" }}
           >
             Please login to view the comment section.

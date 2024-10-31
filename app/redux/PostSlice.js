@@ -12,8 +12,8 @@ export const createPost = createAsyncThunk(
         userId: data?.postDetail?.userId,
         image: data?.postDetail?.image,
       });
-      if (response.data.status === 201) {
-        return response.data;
+      if (response.data.status === 200) {
+        return response.data; // Make sure response contains the created post
       } else {
         return thunkAPI.rejectWithValue(response.data);
       }
@@ -23,6 +23,8 @@ export const createPost = createAsyncThunk(
     }
   }
 );
+
+
 // Get all posts
 export const getAllPosts = createAsyncThunk(
   "post/getAllPosts",
