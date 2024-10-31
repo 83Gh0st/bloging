@@ -2,12 +2,19 @@ import prisma from "@/DB/db.config";
 import { NextResponse } from "next/server";
 
 // Fetch a single post
-export const GET = async (_, { params }) => {
-  console.log("Fetching post with ID:", params.id); // Debug log
+export const GET = async (req, { params }) => {
+  console.log("Fetching post with ID:", params?.id); // Debug log
+  if (!params?.id) {
+    return NextResponse.json({
+      status: 400,
+      message: "Invalid post ID",
+    });
+  }
+
   try {
     const post = await prisma.post.findUnique({
       where: {
-        id: params.id, // Ensure params.id is correct
+        id: params.id,
       },
       include: {
         user: {
@@ -29,7 +36,7 @@ export const GET = async (_, { params }) => {
       data: post,
     });
   } catch (error) {
-    console.error("Error fetching post:", error); // Log the error
+    console.error("Error fetching post:", error.message); // Log specific error message
     return NextResponse.json({
       status: 500,
       message: "An error occurred while fetching the post",
@@ -38,8 +45,15 @@ export const GET = async (_, { params }) => {
 };
 
 // Delete a single post
-export const DELETE = async (_, { params }) => {
-  console.log("Deleting post with ID:", params.id); // Debug log
+export const DELETE = async (req, { params }) => {
+  console.log("Deleting post with ID:", params?.id); // Debug log
+  if (!params?.id) {
+    return NextResponse.json({
+      status: 400,
+      message: "Invalid post ID",
+    });
+  }
+
   try {
     const post = await prisma.post.findUnique({
       where: {
@@ -66,7 +80,7 @@ export const DELETE = async (_, { params }) => {
       data: deletedPost,
     });
   } catch (error) {
-    console.error("Error deleting post:", error); // Log the error
+    console.error("Error deleting post:", error.message); // Log specific error message
     return NextResponse.json({
       status: 500,
       message: "An error occurred while deleting the post",
