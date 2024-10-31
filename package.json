@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+  "dev": "next dev",
+  "build": "prisma generate && prisma db push && next build",
+  "start": "next start",
+  "lint": "next lint",
+  "prisma:generate": "prisma generate",
+  "prisma:db-push": "prisma db push"
+},
+
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",
