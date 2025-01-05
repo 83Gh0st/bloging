@@ -23,7 +23,7 @@ This repository contains the source code for a Blog Platform. This platform allo
 
 ## Installation
 1. Clone this repository
-2. Navigate to the project directory: `cd Blog-Platform`
+2. Navigate to the project directory
 3. Install dependencies: `npm install`
 4. Start the server: `npm run start`
    
